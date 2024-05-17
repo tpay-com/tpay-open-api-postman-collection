@@ -9,7 +9,6 @@ This is a postman collection covering the [Tpay](https://tpay.com/) API.
 Collection use Open API: 
 
 #### [Open API](https://openapi.tpay.com/)
-
  
 ## Requirements
 
@@ -25,6 +24,3 @@ Collection use Open API:
 
 ## Support
 If you found a bug or want to suggest, please [contact with us](https://tpay.com/kontakt).
-
-
-# tpay-postman-collection
