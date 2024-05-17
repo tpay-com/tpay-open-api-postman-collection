@@ -1,4 +1,4 @@
-# Kolekcja Postman do Tpay API 
+# Kolekcja Postman do Tpay Open API 
 
 Kolekcja zawiera przykładowe requesty, które są wykorzystywane przez API [Tpay](https://tpay.com/).
 
