@@ -2,7 +2,7 @@
 
 This is a postman collection covering the [Tpay](https://tpay.com/) API. 
 
-[Polish version :pl: wersja polska](./README_PL.md)
+[Polish version :poland: wersja polska](./README_PL.md)
 
 ## DOCS API
 
