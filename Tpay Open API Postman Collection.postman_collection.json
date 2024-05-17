@@ -1,0 +1,1495 @@
+{
+	"info": {
+		"_postman_id": "5808f373-bdde-435e-903d-761ff088d593",
+		"name": "Tpay Open API Postman Collection",
+		"description": "## Tpay API\n\nThis is a postman collection covering the Tpay API.\n\nMore information in docs:\n\n- [Open API](https://openapi.tpay.com/)\n    \n\n## Requirements:\n\n- [Postman](https://www.postman.com/)\n- [Tpay account (Sandbox)](https://register.sandbox.tpay.com/) or [Tpay account (Production)](https://register.tpay.com/)\n    \n\n## Getting Started\n\n1. Create new workspace.\n2. Download collection and import to your Postman.\n3. In enviroments add your credentials:\n    \n\n- client ID and secret, you find in Merchant's Panel -> Integration -> API (section: Open Api Keys)\n    \n\n## Support\n\nIf you found a bug or want to suggest, please [contact with us](https://tpay.com/kontakt).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17395213"
+	},
+	"item": [
+		{
+			"name": "Open API",
+			"item": [
+				{
+					"name": "Authorization",
+					"item": [
+						{
+							"name": "Check authorization",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"accessToken\", jsonData.access_token);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/oauth/auth",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"oauth",
+										"auth"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get token info",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/oauth/tokeninfo",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"oauth",
+										"tokeninfo"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Transactions",
+					"item": [
+						{
+							"name": "Get all transactions",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/transactions",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"transactions"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "from",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "to",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "35",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create transaction without groupId/channelId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"transactionId\", jsonData.transactionId);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"amount\": 200.14,\n    \"description\": \"Test transaction\",\n    \"payer\": {\n        \"email\": \"jan.kowalski@example.com\",\n        \"name\": \"Jan Kowalski\"\n    },\n    \"callbacks\": {\n        \"payerUrls\": {\n            \"success\": \"https://test.tpay.com/payment_success\",\n            \"error\": \"https://test.tpay.com/payment_error\"\n        },\n        \"notification\": {\n            \"url\": \"https://test.tpay.com\",\n            \"email\": \"test@tpay.com\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrlSandbox}}/transactions",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"transactions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create transaction with groupId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"transactionId\", jsonData.transactionId);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"amount\": 200.14,\n  \"description\": \"Test transaction\",\n  \"hiddenDescription\": \"123456\",\n  \"payer\": {\n    \"email\": \"jan.kowalski@example.com\",\n    \"name\": \"Jan Kowalski\"\n  },\n  \"callbacks\": {\n    \"payerUrls\": {\n      \"success\": \"https://test.tpay.com/payment_success\",\n      \"error\": \"https://test.tpay.com/payment_error\"\n    },\n    \"notification\": {\n      \"url\": \"https://test.tpay.com\",\n      \"email\": \"test@tpay.com\"\n    }\n  },\n  \"pay\": {\n    \"groupId\": 150,\n    \"method\": \"pay_by_link\"\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrlSandbox}}/transactions",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"transactions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create transaction with channelId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"transactionId\", jsonData.transactionId);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"amount\": 200.14,\n  \"description\": \"Test transaction\",\n  \"hiddenDescription\": \"123456\",\n  \"payer\": {\n    \"email\": \"jan.kowalski@example.com\",\n    \"name\": \"Jan Kowalski\"\n  },\n  \"callbacks\": {\n    \"payerUrls\": {\n      \"success\": \"https://test.tpay.com/payment_success\",\n      \"error\": \"https://test.tpay.com/payment_error\"\n    },\n    \"notification\": {\n      \"url\": \"https://test.tpay.com\",\n      \"email\": \"test@tpay.com\"\n    }\n  },\n  \"pay\": {\n    \"channelId\": 4,\n    \"method\": \"pay_by_link\"\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrlSandbox}}/transactions",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"transactions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get specified transaction",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/transactions/{{transactionId}}",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"transactions",
+										"{{transactionId}}"
+									],
+									"query": [
+										{
+											"key": "transactionId",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get a list of refunds for the transaction",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/transactions/{{transactionId}}/refunds",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"transactions",
+										"{{transactionId}}",
+										"refunds"
+									],
+									"query": [
+										{
+											"key": "from",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "to",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "35",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Refund a full amount of the transaction",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrlSandbox}}/transactions/{{transactionId}}/refunds",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"transactions",
+										"{{transactionId}}",
+										"refunds"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Refund a partial amount of the transaction",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"amount\": 1.14\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrlSandbox}}/transactions/{{transactionId}}/refunds",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"transactions",
+										"{{transactionId}}",
+										"refunds"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Pay with encrypted card data",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"groupId\": 103,\n  \"cardPaymentData\": {\n    \"card\": \"n5vL6m+QLxURA8a7+wqfGFHX3GKAZwNtsGF0ZHmY9bFBQYZklY4ilXBdThIENGsfhomSP8Kkc0amAIymYfNoR7nwcno1X3vzrU+P9eNyZ0VMXOzSYP0S9zaSTQbkL/UrVrsYeJcD5hsXfaiT6eBKnq9LFLE4WtNH9SpWzMUE+0Y=\",\n    \"save\": 1\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrlSandbox}}/transactions/{{transactionId}}/pay",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"transactions",
+										"{{transactionId}}",
+										"pay"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Pay with blik code",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"groupId\": 150,\n  \"blikPaymentData\": {\n    \"blikToken\": \"777123\"\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrlSandbox}}/transactions/{{transactionId}}/pay",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"transactions",
+										"{{transactionId}}",
+										"pay"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "List of payment methods",
+					"item": [
+						{
+							"name": "Get a list of groups",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/transactions/bank-groups",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"transactions",
+										"bank-groups"
+									],
+									"query": [
+										{
+											"key": "onlyOnline",
+											"value": "false",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get a list of channels",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/transactions/channels",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"transactions",
+										"channels"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Refunds",
+					"item": [
+						{
+							"name": "Get a list of refunds",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/refunds",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"refunds"
+									],
+									"query": [
+										{
+											"key": "payerEmail",
+											"value": "jan.kowalski@example.com",
+											"disabled": true
+										},
+										{
+											"key": "transactionTitle",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "context",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "token",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "from",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "to",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "35",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get specified refund",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/refunds/{{refundId}}",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"refunds",
+										"{{refundId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Accounts",
+					"item": [
+						{
+							"name": "Get all merchant accounts",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/accounts",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"accounts"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "35",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a basic account",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"offerCode\": \"hz3Mq\",\n  \"email\": \"jan.kowalski@example.com\",\n  \"phone\": {\n    \"phoneNumber\": \"00123456\",\n    \"phoneCountry\": \"PL\"\n  },\n  \"taxId\": \"3774716081\",\n  \"regon\": \"092045117\",\n  \"krs\": \"0000160673\",\n  \"legalForm\": 3,\n  \"categoryId\": 78,\n  \"mcc\": \"5722\",\n  \"merchantApiConsent\": false,\n  \"website\": [\n    {\n      \"name\": \"Przykładowe Zakupy Online\",\n      \"friendlyName\": \"Przykładowe Zakupy Online\",\n      \"description\": \"Zakupy online - rtv i agd\",\n      \"url\": \"https:\\/\\/przykladowezakupy.pl\"\n    }\n  ],\n  \"address\": [\n    {\n      \"friendlyName\": \"Adres Korespondencyjny\",\n      \"name\": \"Example Sp. z o.o.\",\n      \"street\": \"ul. Przykładowa\",\n      \"houseNumber\": \"44b\",\n      \"roomNumber\": \"2\",\n      \"postalCode\": \"00-001\",\n      \"city\": \"Warszawa\",\n      \"country\": \"PL\",\n      \"phone\": \"00123456\",\n      \"isMain\": true,\n      \"isCorrespondence\": true,\n      \"isInvoice\": true\n    }\n  ],\n  \"person\": [\n    {\n      \"name\": \"Jan\",\n      \"surname\": \"Kowalski\",\n      \"isRepresentative\": true,\n      \"isContactPerson\": true,\n      \"contact\": [\n        {\n          \"type\": 1,\n          \"contact\": \"mail@example.com\"\n        }\n      ]\n    }\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrlSandbox}}/accounts",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"accounts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get specified merchant's account",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/accounts/{{accountId}}",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"accounts",
+										"{{accountId}}"
+									],
+									"query": [
+										{
+											"key": "accountId",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List all available categories",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/accounts/category",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"accounts",
+										"category"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get individual category",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/accounts/category?categoryId=30",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"accounts",
+										"category"
+									],
+									"query": [
+										{
+											"key": "categoryId",
+											"value": "30"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List all available merchant category codes",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/accounts/mcc",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"accounts",
+										"mcc"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List all available legal forms",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/accounts/legalForm",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"accounts",
+										"legalForm"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get individual legal form",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/accounts/legalForm?legalForm=3",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"accounts",
+										"legalForm"
+									],
+									"query": [
+										{
+											"key": "legalForm",
+											"value": "3"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List all available documents",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/accounts/document",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"accounts",
+										"document"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get individual document",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/accounts/document?documentTypeId=5",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"accounts",
+										"document"
+									],
+									"query": [
+										{
+											"key": "documentTypeId",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Upload file",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"file\": \"string\",\n    \"accountId\": \"mc_6UvbBjehvHXA7vfD\",\n    \"documentType\": 1,\n    \"personId\": \"pr_bmZYOMG86DJ3PNBx\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrl}}/accounts/files",
+									"host": [
+										"{{apiUrl}}"
+									],
+									"path": [
+										"accounts",
+										"files"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List of all poses defined for Partner's",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{apiUrlSandbox}}/accounts/pos",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"accounts",
+										"pos"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Tokenization",
+					"item": [
+						{
+							"name": "Initialize card tokenization process",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"payer\": {\n        \"name\": \"Jan Kowalski\",\n        \"email\": \"jan.kowalski@example.com\"\n    },\n    \"callbackUrl\": \"https://test.tpay.com\",\n    \"redirectUrl\": {\n      \"success\": \"https://test.tpay.com/payment_success\",\n      \"error\": \"https://test.tpay.com/payment_error\"\n    },\n    \"card\": \"n5vL6m+QLxURA8a7+wqfGFHX3GKAZwNtsGF0ZHmY9bFBQYZklY4ilXBdThIENGsfhomSP8Kkc0amAIymYfNoR7nwcno1X3vzrU+P9eNyZ0VMXOzSYP0S9zaSTQbkL/UrVrsYeJcD5hsXfaiT6eBKnq9LFLE4WtNH9SpWzMUE+0Y=\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrlSandbox}}/tokens",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"tokens"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Wallet",
+					"item": [
+						{
+							"name": "Return the Apple Pay session in base64",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"domainName\": \"secure.tpay.com\",\n    \"displayName\": \"Tpay.com\",\n    \"validationUrl\": \"https://apple-pay-gateway-cert.apple.com/paymentservices/startSession\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrlSandbox}}/wallet/applepay/init",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"wallet",
+										"applepay",
+										"init"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Reports",
+					"item": [
+						{
+							"name": "Get a list of reports",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrlSandbox}}/reports",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"reports"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "pageSize",
+											"value": "20",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "35",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get specific report file contents",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{clientId}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{secret}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{apiUrlSandbox}}/reports",
+									"host": [
+										"{{apiUrlSandbox}}"
+									],
+									"path": [
+										"reports"
+									],
+									"query": [
+										{
+											"key": "reportId",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "fileId",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
