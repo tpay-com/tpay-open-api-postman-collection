@@ -1,4 +1,4 @@
-# Tpay API Postman Collection
+# Tpay Open API Postman Collection
 
 This is a postman collection covering the [Tpay](https://tpay.com/) API. 
 
