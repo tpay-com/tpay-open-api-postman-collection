@@ -23,4 +23,4 @@ Collection use Open API:
 #### client ID and secret, you find in Merchant's Panel -> Integration -> API (section: Open Api Keys)
 
 ## Support
-If you found a bug or want to suggest, please [contact with us](https://tpay.com/kontakt).
+If you found a bug or want to suggest anything, please [contact with us](https://tpay.com/kontakt).
