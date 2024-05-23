@@ -18,7 +18,7 @@ Collection use Open API:
 ## Getting Started
 1. Create new workspace.
 2. Download collection and import to your Postman.
-3. In enviroments add your credentials:
+3. In the enviroments tab, complete your credentials:
 
 #### client ID and secret, you find in Merchant's Panel -> Integration -> API (section: Open Api Keys)
 
